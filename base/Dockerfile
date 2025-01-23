@@ -24,7 +24,10 @@ COPY ./img_files/* /app/
 EXPOSE 8080
 
 # app config stuff
-ENV FILTER_RESPONSE_REPLACE=1  # just do str.replace(password, "<filtered>")
-ENV FILTER_RESPONSE_ERASE=0    # if password in response, erase response
+
+# just do str.replace(password, "<filtered>")
+ENV FILTER_RESPONSE_REPLACE=1
+# if password in response, erase response
+ENV FILTER_RESPONSE_ERASE=0
 
 CMD ["python3" ,"/app/server.py"]
