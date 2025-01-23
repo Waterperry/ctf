@@ -1,0 +1,30 @@
+FROM python:3.12.8-slim-bullseye
+
+RUN mkdir /app
+RUN useradd --create-home python
+RUN chown -R python /app
+USER python
+
+RUN mkdir /home/python/.cache
+RUN chown -R python /home/python/.cache
+RUN chmod 777 -R /home/python/.cache
+
+# do the expensive stuff before copying the code so it stays cached
+RUN pip install --no-cache-dir accelerate==1.3.0 transformers==4.48.1 fastapi==0.115.6 uvicorn==0.34.0 pydantic==2.10.5 pydantic_core==2.27.2 requests==2.32.3
+
+# in env as we use in script
+# alternatives are Qwen/Qwen2.5-1.3B-Instruct  Qwen/Qwen2.5-3B-Instruct  Qwen/Qwen2.5-7B-Instruct
+# or basically any other LLM on huggingface. note that the "jailbreak" prompts don't necessarily work for other modes.
+ENV MODEL_NAME="Qwen/Qwen2.5-0.5B-Instruct"
+
+RUN python3 -c 'import os; import transformers; _ = transformers.AutoModelForCausalLM.from_pretrained(os.environ["MODEL_NAME"]); _ = transformers.AutoTokenizer.from_pretrained(os.environ["MODEL_NAME"])'
+
+COPY ./img_files/* /app/
+
+EXPOSE 8080
+
+# app config stuff
+ENV FILTER_RESPONSE_REPLACE=1  # just do str.replace(password, "<filtered>")
+ENV FILTER_RESPONSE_ERASE=0    # if password in response, erase response
+
+CMD ["python3" ,"/app/server.py"]
