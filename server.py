@@ -8,6 +8,8 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
+from embed import keyword_similarity
+
 logger = getLogger(__name__)
 basicConfig(
     level="INFO", format="%(asctime)s [%(levelname)s @ %(module)s]: %(message)s"
@@ -75,11 +77,19 @@ app = FastAPI()
 
 class Request(BaseModel):
     message: str
+    embed: bool = False
 
 
 @app.post("/llm")
 def llm(request: Request) -> dict[str, str]:
-    response: str = get_llm_response(prompt=request.message)
+    pretext: str
+    if request.embed:
+        logger.info("Doing embedding.")
+        pretext = "\n\n".join(keyword_similarity(request.message)) + "\n\n"
+        logger.info("Got pretext ```%s``` using embedding.", pretext)
+    else:
+        pretext = ""
+    response: str = get_llm_response(prompt=(pretext + request.message))
     logger.info("Got response \"%s\" from the LLM.", response)
     # filter response here for higher difficulties
     if os.getenv("FILTER_RESPONSE_ERASE", None) == "1":
