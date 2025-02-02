@@ -1,6 +1,14 @@
 General LLM Primer
     - Base model + what is fine-tuning
 
+Actual challenge description:
+ 1. No filtering, no "keep this secret" in prompt
+ 2. Ask LLM to keep key secret
+ 3. str.replace
+ 4. nuke response if it contains password
+ 5. do RAG-like things
+ 6. pass off to second LLM to vet response
+
 1. No security, just system prompt leakage
     - How do LLMs generate?
         - When you first send a message at the start of a conversation, it is prepended with a "system prompt" <WHAT IS A SYSTEM PROMPT>

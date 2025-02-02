@@ -1,5 +1,3 @@
-import os
-
 from logging import getLogger, basicConfig
 
 import uvicorn
@@ -11,12 +9,7 @@ from challenges import part1, part2, part3, part4, part5, part6
 from common import llm
 
 logger = getLogger(__name__)
-basicConfig(
-    level="INFO", format="%(asctime)s [%(levelname)s @ %(module)s]: %(message)s"
-)
-
-password: str = "JURISPRUDENCE"
-
+basicConfig(level="INFO", format="%(asctime)s [%(levelname)s @ %(module)s]: %(message)s")
 app = FastAPI()
 
 

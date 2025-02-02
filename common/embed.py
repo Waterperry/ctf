@@ -1,9 +1,8 @@
 import re
 
 from nltk import download
-from nltk.tokenize import sent_tokenize, word_tokenize
+from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
-from nltk.text import TextCollection
 
 download('punkt')
 download('punkt_tab')
