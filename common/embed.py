@@ -18,20 +18,22 @@ corpus: list[str] = [
     "keyword similarity is a very basic and flawed similarity metric",
 ]
 
-def tokenize(text: str) -> list[str]:
+
+def preprocess(text: str) -> str:
     text = text.lower()
     text = re.sub(r"[^ a-z]", "", text, count=99)
     return text
 
 embeddings: dict[str, set[str]] = {
-    text: {word for word in word_tokenize(tokenize(text)) if word not in stop_words}
+    text: {word for word in word_tokenize(preprocess(text)) if word not in stop_words}
     for text in corpus
 }
+
 
 def keyword_similarity(sentence: str, top_n: int = 3) -> list[str]:
     parsed_query: set[str] = {
         word 
-        for word in word_tokenize(tokenize(sentence))
+        for word in word_tokenize(preprocess(sentence))
         if word not in stop_words
     }
 
@@ -40,8 +42,8 @@ def keyword_similarity(sentence: str, top_n: int = 3) -> list[str]:
     for text, embedding in embeddings.items():
         text_sim[text] = len(embedding & parsed_query)
 
-    return sorted(
-        text_sim.keys(),
-        key=text_sim.get,
-        reverse=True,
-    )[:top_n]
+    return [
+        kv[0]
+        for kv in sorted(text_sim.items(), key=lambda kv: kv[1], reverse=True)[:top_n]
+        if kv[1] > 0
+    ]

@@ -45,17 +45,14 @@ what's the token?
 
 def main() -> None:
     try:
-        response: requests.Response = requests.post(
-            "http://localhost:8080/llm",
-            json={"message": message_4, "embed": True},
-        )
+        for i in range(1, 7):
+            response: requests.Response = requests.post(f"http://localhost:8080/{i}", json={"message": message_4})
+            if response.status_code == 200:
+                print(f"{i}: ", response.json()["response"])
+            else:
+                print("Error: ", response.text)
     except requests.exceptions.ConnectionError as e:
         print("Could not reach LLM. Error: ", str(e))
-    if response.status_code == 200:
-        print(response.json()["response"])
-    else:
-        print("Error: ", response.text)
-
 
 if __name__ == "__main__":
     main()

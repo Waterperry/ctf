@@ -1,0 +1,55 @@
+General LLM Primer
+    - Base model + what is fine-tuning
+
+1. No security, just system prompt leakage
+    - How do LLMs generate?
+        - When you first send a message at the start of a conversation, it is prepended with a "system prompt" <WHAT IS A SYSTEM PROMPT>
+        - Subsequent messages are prepended with the entire history of BOTH your messages and the LLM's responses (up to the limit of the context window <WHAT IS THE CONTEXT WINDOW>)
+    - What's in the system prompt?
+        - Behaviour-influencing instructions and general guidance to keep the LLM on-track.
+        - Some examples at https://github.com/jujumilk3/leaked-system-prompts/blob/main/anthropic-claude-3-haiku_20240712.md and others in the repo
+    - More modern agents are trained to adhere to instructions in the system prompt more closely
+    - What is jailbreaking?
+        - Broadly defined as getting the LLM to general harmful or unintended information
+        - For the purposes of this exercise, it can be defined as overriding behaviours imposed by the system prompt
+            - It can also be viewed as overriding behaviours imposed by fine-tuning
+
+2. Some basic protection (do not reveal stuff from system prompt)
+    - Basic prompt engineering /jailbreaking techniques (pretexting, OOD token sequences, ...)
+
+3. More advanced protection (filtering with .replace, total response filtering)
+    - Bypassing by doing things like spelling it out, ...
+
+4. More advanced protection (maybe if it has any letter of the password, just as a fun side challenge? I can see some cool ways of solving this)
+
+5. Handing off to other LLM to determine whether it's trying to steal a password.
+
+6. Introduce some areas from academia
+    - Dataset poisoning
+    - Memorization
+
+
+so what is the structure of this repo then? 
+ - base resources
+    - llm calls
+    - filtering code
+ - one file per challenge
+ - each file defines a run()
+ - then launcher is either:
+    - run a docker image with each individual file (lame)
+    - or pull all into one and have diff endpoints (seems more sensible)
+
+
+Overarching structure of challenges
+ - 3 main groups
+    - Common misconfigurations
+        - RAG on everything (part4)
+        - Sensitive info in system prompt (part1/2/3/5)
+            - Add a note on why this is done (e.g. Agentic, Corpo stuff)
+    - Common countermeasures
+        - Keyword filtering (part3)
+        - Full response filtering (part4)
+        - Secondary LLM (this is a bit silly but can be a fun challenge) (part5)
+    - Random other cool things
+        - Dataset poisoning
+        - Memorization (and a side note about how RAG is not the only way to encode sensitive information into an LLM)
