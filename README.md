@@ -26,7 +26,7 @@ python3 scripts/interactive_client.py
 ```
 Note the LLM docker image must be running.
 
-To send a single message (configurable in the Python script so you can add new-lines etc.):
+To send a single message to each challenge endpoint (configurable in the Python script so you can add new-lines etc.):
 ```bash
 python3 scripts/send_single_message.py
 ```
@@ -34,4 +34,5 @@ python3 scripts/send_single_message.py
 ## Notes
 
 ### Challenge
-The Dockerfiles have some environment variables that control the challenge difficulty. Set them to 1 to enable, or anything else to disable.
+The server now has several endpoints like /1, /2, ...
+These correspond to the part of the challenge, and they all do different things (more info in the `challenge_overview.txt` file).

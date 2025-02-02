@@ -6,7 +6,7 @@ Actual challenge description:
  2. Ask LLM to keep key secret
  3. str.replace
  4. nuke response if it contains password
- 5. do RAG-like things
+ 5. do RAG-like things (password AND api key in this one, need to decide what the point of challenges is / if it belongs in same family as 1-4,6)
  6. pass off to second LLM to vet response
 
 1. No security, just system prompt leakage
