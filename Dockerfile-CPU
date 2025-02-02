@@ -19,8 +19,11 @@ ENV MODEL_NAME="Qwen/Qwen2.5-0.5B-Instruct"
 
 RUN python3 -c 'import os; import transformers; _ = transformers.AutoModelForCausalLM.from_pretrained(os.environ["MODEL_NAME"]); _ = transformers.AutoTokenizer.from_pretrained(os.environ["MODEL_NAME"])'
 
-COPY ./*.py /app
+COPY ./server.py /app
+COPY ./common /app/common
+COPY ./challenges /app/challenges
 
 EXPOSE 8080
 
-CMD ["python3" ,"/app/server.py"]
+WORKDIR /app
+CMD ["python3" ,"server.py"]
