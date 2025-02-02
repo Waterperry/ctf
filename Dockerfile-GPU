@@ -23,11 +23,4 @@ COPY ./*.py /app
 
 EXPOSE 8080
 
-# app config stuff
-
-# just do str.replace(password, "<filtered>")
-ENV FILTER_RESPONSE_REPLACE=1
-# if password in response, erase response
-ENV FILTER_RESPONSE_ERASE=0
-
 CMD ["python3" ,"/app/server.py"]
