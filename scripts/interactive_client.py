@@ -1,14 +1,16 @@
 import requests
 
+from argparse import ArgumentParser
 
-def main() -> None:
+
+def client(ip: str, port: str) -> None:
     while True:
         message: str = input("enter prompt > ")
         if not message:
             continue
         try:
             response: requests.Response = requests.post(
-                "http://localhost:8080/llm",
+                f"http://{ip}:{port}/1",  # or 2-6
                 json={"message": message},
             )
         except requests.exceptions.ConnectionError as e:
@@ -21,4 +23,9 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    arg_parser = ArgumentParser()
+    arg_parser.add_argument("--ip", default="localhost")
+    arg_parser.add_argument("--port", default="8080")
+    args = arg_parser.parse_args()
+
+    client(ip=args.ip, port=args.port)
