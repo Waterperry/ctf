@@ -31,6 +31,8 @@ To send a single message to each challenge endpoint (configurable in the Python 
 python3 scripts/send_single_message.py
 ```
 
+The above commands also take optional parameters `--ip` and `--port` to configure which host it sends requests to. The interactive client takes an additional optional parameter `--challenge` which controls the challenge endpoint it sends requests to. The send_single_message script will send a message to all of the challenge endpoints.
+
 ## Notes
 
 ### Challenge
