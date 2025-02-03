@@ -3,14 +3,14 @@ import requests
 from argparse import ArgumentParser
 
 
-def client(ip: str, port: str) -> None:
+def client(ip: str, port: str, challenge: int) -> None:
     while True:
         message: str = input("enter prompt > ")
         if not message:
             continue
         try:
             response: requests.Response = requests.post(
-                f"http://{ip}:{port}/1",  # or 2-6
+                f"http://{ip}:{port}/{challenge}",
                 json={"message": message},
             )
         except requests.exceptions.ConnectionError as e:
@@ -26,6 +26,7 @@ if __name__ == "__main__":
     arg_parser = ArgumentParser()
     arg_parser.add_argument("--ip", default="localhost")
     arg_parser.add_argument("--port", default="8080")
+    arg_parser.add_argument("--challenge", default="1")
     args = arg_parser.parse_args()
 
-    client(ip=args.ip, port=args.port)
+    client(ip=args.ip, port=args.port, challenge=args.challenge)
