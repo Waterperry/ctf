@@ -48,7 +48,6 @@
             word-wrap: break-word;
         }
 
-        # style spinner, hide by default
         .spinner {
             border: 4px solid #f3f3f3;
             border-top: 4px solid #3498db;
@@ -89,6 +88,7 @@
       <option value="4">Part Four</option>
       <option value="5">Part Five</option>
       <option value="6">Part Six</option>
+      <option value="7">Part Seven</option>
     </select>
     <button onclick="sendRequest()">Send</button>
     <div id="spinner" class="spinner"></div>
@@ -116,7 +116,7 @@
         };
 
         try {
-            const response = await fetch('http://localhost:8080/' + endpoint, {
+            const response = await fetch("/" + endpoint, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(payload)

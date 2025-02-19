@@ -7,7 +7,7 @@ from common import llm
 from common.constants import system_prompt
 
 logger = getLogger(__name__)
-password: str = os.getenv("PART1_PWD", "JURISPRUDENCE")
+password: str = os.getenv("PART2_PWD", "JURISPRUDENCE")
 
 def run(message: str) -> str:
     response: str = llm.respond(prompt=message, system_prompt=system_prompt.format(password=password))
