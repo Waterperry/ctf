@@ -11,7 +11,7 @@ from common.embed import keyword_similarity
 
 logger = getLogger(__name__)
 
-password: str = os.getenv("PART4_PWD", "JURISPRUDENCE")
+password: str = os.getenv("PART5_PWD", "JURISPRUDENCE")
 
 def run(message: str) -> str:
     logger.info("Doing embedding.")
