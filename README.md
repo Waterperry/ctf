@@ -20,6 +20,8 @@ docker run -it --rm -p8080:8080 --gpus all qwen25_05b
 
 ### Interact
 
+To use the UI, just navigate to `http://localhost:8080/` in a browser.
+
 To run a simple interactive chat client (with no history (yet)):
 ```bash
 python3 scripts/interactive_client.py
