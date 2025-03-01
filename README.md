@@ -7,7 +7,7 @@
 ```bash
 pip install -r requirements.txt
 docker build -t qwen25_05b -f Dockerfile-CPU .
-docker run -it --rm -p8080:8080 qwen25_05b
+docker run -it --rm -p8080:8080 -v /path/to/home/.cache:/home/python/.cache qwen25_05b
 ```
 
 ### Build And Deploy (GPU)
@@ -15,7 +15,7 @@ docker run -it --rm -p8080:8080 qwen25_05b
 ```bash
 pip install -r requirements.txt
 docker build -t qwen25_05b -f Dockerfile-GPU .
-docker run -it --rm -p8080:8080 --gpus all qwen25_05b
+docker run -it --rm -p8080:8080 -v /path/to/home/.cache:/home/python/.cache --gpus all qwen25_05b
 ```
 
 ### Interact

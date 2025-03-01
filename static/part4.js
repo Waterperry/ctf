@@ -5,9 +5,10 @@ const spinner = document.querySelector("#spinner");
 const sendButton = document.querySelector("#sendButton");
 
 // Utils
+const endpoint = "/archive/chat";
 const decoder = new TextDecoder();
 
-async function sendRequest(endpoint) {
+async function sendRequest() {
     if (endpoint == "") {
         console.log("Need to set an endpoint!!");
         return;
@@ -43,3 +44,13 @@ async function sendRequest(endpoint) {
         spinner.style.display = 'none';
     }
 }
+
+function checkKeypress(event){
+    if (event.key == "Enter" && !event.shiftKey) {
+        sendRequest(endpoint);
+    }
+}
+
+// Handlers and listeners
+sendButton.addEventListener("click", () => sendRequest(endpoint));
+inputTextBox.addEventListener("keydown", (event) => checkKeypress(event));
