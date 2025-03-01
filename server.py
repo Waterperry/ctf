@@ -1,10 +1,11 @@
 from logging import getLogger, basicConfig
 
-from fastapi.responses import RedirectResponse
 import uvicorn
 
 from fastapi import FastAPI, staticfiles
+from fastapi.responses import RedirectResponse, StreamingResponse
 from pydantic import BaseModel
+from transformers import TextIteratorStreamer
 
 from challenges import part1, part2, part3, part4, part5, part6, part7
 from common import llm
@@ -16,15 +17,22 @@ app.mount("/static", staticfiles.StaticFiles(directory="static"), "static")
 
 class Request(BaseModel):
     message: str
+    stream: bool = False
 
 @app.get("/")
 def redirect_to_ui() -> RedirectResponse:
     return RedirectResponse(url="/static/website.html")
 
 
+@app.get("/1_stream")
+async def process_part_1_streaming(message: str) -> StreamingResponse:
+    response: TextIteratorStreamer = part1.run(message, stream=True)
+    return StreamingResponse(response)
+
+
 @app.post("/1")
 def process_part_1(request: Request) -> dict[str, str]:
-    response: str = part1.run(request.message)
+    response: str = part1.run(request.message)  # type: ignore
     return {"response": response}
 
 
