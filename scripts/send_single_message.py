@@ -66,7 +66,7 @@ def send_request(ip: str, port: str, message: str = message_3) -> None:
 if __name__ == "__main__":
     arg_parser = ArgumentParser()
     arg_parser.add_argument("--ip", default="localhost")
-    arg_parser.add_argument("--port", default="8080")
+    arg_parser.add_argument("--port", default="8000")
     arg_parser.add_argument("--message", default="3")
     args = arg_parser.parse_args()
     try:

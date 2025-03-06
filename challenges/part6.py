@@ -10,7 +10,7 @@ logger = getLogger(__name__)
 
 password: str = os.getenv("PART6_PWD", "JURISPRUDENCE")
 
-def run(message: str) -> str:
+def run(message: str, stream: bool = False) -> str:
     response: str = llm.respond(prompt=message, system_prompt=system_prompt.format(password=password))
     logger.info("Got response \"%s\" from the LLM.", response)
     # filter response here for higher difficulties

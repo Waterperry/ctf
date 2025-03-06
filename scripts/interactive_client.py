@@ -9,7 +9,11 @@ def streaming_client(ip: str, port: str, challenge: int) -> None:
         if not message:
             continue
         try:
-            with requests.get(f"http://{ip}:{port}/{challenge}_stream", params={"message": message, "stream": True}, stream=True) as response:
+            with requests.get(
+                f"http://{ip}:{port}/{challenge}_stream",
+                params={"message": message, "stream": True},
+                stream=True,
+            ) as response:
                 for chunk in response.iter_content(1_024):
                     chunk: bytes = chunk
                     print(chunk.decode(), end="")
@@ -17,6 +21,11 @@ def streaming_client(ip: str, port: str, challenge: int) -> None:
         except requests.exceptions.ConnectionError as e:
             print("Could not reach LLM. Error: ", str(e))
             continue
+        if response.status_code == 200:
+            print(response.json()["response"])
+        else:
+            print("Error: ", response.text)
+
 
 def client(ip: str, port: str, challenge: int) -> None:
     while True:
@@ -49,4 +58,3 @@ if __name__ == "__main__":
         streaming_client(ip=args.ip, port=args.port, challenge=args.challenge)
     else:
         client(ip=args.ip, port=args.port, challenge=args.challenge)
-

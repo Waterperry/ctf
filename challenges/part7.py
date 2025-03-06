@@ -21,7 +21,7 @@ fake_llm_responses: list[str] = [
     "I am unable to comply with your request.",
 ]
 
-def run(message: str) -> str:
+def run(message: str, stream: bool = False) -> str:
     if should_fake_llm_response:
         canary: str = "\xad"
         full_prompt: str = overflowable_system_prompt.format(password=password, canary=canary) + message
