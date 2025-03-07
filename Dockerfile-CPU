@@ -10,16 +10,17 @@ RUN chown -R python /home/python/.cache
 RUN chmod 777 -R /home/python/.cache
 
 # do the expensive stuff before copying the code so it stays cached
-RUN pip install --no-cache-dir accelerate==1.3.0 transformers==4.48.1 fastapi==0.115.6 uvicorn==0.34.0 pydantic==2.10.5 pydantic_core==2.27.2 requests==2.32.3 nltk==3.9.1
+RUN pip install --no-cache-dir accelerate==1.3.0 transformers==4.49.0 fastapi==0.115.6 uvicorn==0.34.0 pydantic==2.10.5 pydantic_core==2.27.2 requests==2.32.3 nltk==3.9.1
 
 # in env as we use in script
-# alternatives are Qwen/Qwen2.5-1.3B-Instruct  Qwen/Qwen2.5-3B-Instruct  Qwen/Qwen2.5-7B-Instruct
+# alternatives are Qwen/Qwen2.5-0.5B-Instruct Qwen/Qwen2.5-1.3B-Instruct  Qwen/Qwen2.5-3B-Instruct  Qwen/Qwen2.5-7B-Instruct microsoft/Phi-4-mini-instruct
 # or basically any other LLM on huggingface. note that the "jailbreak" prompts don't necessarily work for other modes.
-ENV MODEL_NAME="Qwen/Qwen2.5-0.5B-Instruct"
+ENV MODEL_NAME="microsoft/phi-4-mini-instruct"
 
-RUN python3 -c 'from nltk import download; download("semcor"); download("punkt"); download("punkt_tab"); download("stopwords"); import os; import transformers; _ = transformers.AutoModelForCausalLM.from_pretrained(os.environ["MODEL_NAME"]); _ = transformers.AutoTokenizer.from_pretrained(os.environ["MODEL_NAME"])'
+RUN python3 -c 'from nltk import download; download("semcor"); download("punkt"); download("punkt_tab"); download("stopwords");'
 
 COPY ./server.py /app
+COPY ./static /app/static
 COPY ./common /app/common
 COPY ./challenges /app/challenges
 
