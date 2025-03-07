@@ -1,10 +1,12 @@
 from logging import getLogger, basicConfig
+from typing import Callable, Generator
 
-from fastapi.responses import RedirectResponse
 import uvicorn
 
 from fastapi import FastAPI, staticfiles
+from fastapi.responses import RedirectResponse, StreamingResponse
 from pydantic import BaseModel
+from transformers import TextIteratorStreamer
 
 from challenges import part1, part2, part3, part4, part5, part6, part7
 from common import llm
@@ -16,51 +18,35 @@ app.mount("/static", staticfiles.StaticFiles(directory="static"), "static")
 
 class Request(BaseModel):
     message: str
+    stream: bool = False
+
+
+challenges: dict[str, Callable[..., str | Generator[str, None, None]]] = {
+    "1": part1.run,
+    "2": part2.run,
+    "3": part3.run,
+    "4": part4.run,
+    "5": part5.run,
+    "6": part6.run,
+    "7": part7.run,
+}
+
 
 @app.get("/")
 def redirect_to_ui() -> RedirectResponse:
     return RedirectResponse(url="/static/website.html")
 
 
-@app.post("/1")
-def process_part_1(request: Request) -> dict[str, str]:
-    response: str = part1.run(request.message)
+@app.post("/challenge/{challenge_idx}")
+def challenge(challenge_idx: str, request: Request) -> dict[str, str]:
+    response: str = challenges[challenge_idx](request.message)  # type: ignore
     return {"response": response}
 
 
-@app.post("/2")
-def process_part_2(request: Request) -> dict[str, str]:
-    response: str = part2.run(request.message)
-    return {"response": response}
-
-
-@app.post("/3")
-def process_part_3(request: Request) -> dict[str, str]:
-    response: str = part3.run(request.message)
-    return {"response": response}
-
-
-@app.post("/4")
-def process_part_4(request: Request) -> dict[str, str]:
-    response: str = part4.run(request.message)
-    return {"response": response}
-
-
-@app.post("/5")
-def process_part_5(request: Request) -> dict[str, str]:
-    response: str = part5.run(request.message)
-    return {"response": response}
-
-
-@app.post("/6")
-def process_part_6(request: Request) -> dict[str, str]:
-    response: str = part6.run(request.message)
-    return {"response": response}
-
-@app.post("/7")
-def process_part_7(request: Request) -> dict[str, str]:
-    response: str = part7.run(request.message)
-    return {"response": response}
+@app.get("/challenge/stream/{challenge_idx}")
+async def streaming_challenge(challenge_idx: str, message: str) -> StreamingResponse:
+    streamer: TextIteratorStreamer = challenges[challenge_idx](message, stream=True)
+    return StreamingResponse(streamer)
 
 
 def main() -> None:

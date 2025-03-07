@@ -21,13 +21,16 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
             width: 800px;
+            max-height: 70%;
+            overflow: scroll;
         }
-        input[type="text"] {
+        input[type="text"]{
             width: 80%;
             padding: 10px;
             margin-bottom: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
+            height: auto;
         }
         button {
             padding: 10px 15px;
@@ -46,6 +49,8 @@
             background-color: #e9ecef;
             border-radius: 4px;
             word-wrap: break-word;
+            white-space: pre-wrap;
+            line-height: 140%;
         }
 
         .spinner {
@@ -79,7 +84,7 @@
 <body>
 <div class="container">
     <h2>Send a Message</h2>
-    <input type="text" id="inputText" placeholder="Enter text..." onkeydown="checkKeypress(event)">
+    <input type="text" id="inputText" placeholder="Enter message">
     <br>
     <select id="dropdown" type="dropdown">
       <option value="1">Part One</option>
@@ -90,61 +95,10 @@
       <option value="6">Part Six</option>
       <option value="7">Part Seven</option>
     </select>
-    <button onclick="sendRequest()">Send</button>
+    <button id="sendButton">Send</button>
+    <div id="response" class="response" style="display:none;"></div><br>
     <div id="spinner" class="spinner"></div>
-    <div id="response" class="response" style="display:none;"></div>
 </div>
-
-<script>
-    async function sendRequest() {
-        const inputText = document.getElementById("inputText").value;
-        const endpoint = document.getElementById("dropdown").value;
-
-        if (!inputText.trim()) {
-            alert("Please enter some text.");
-            return;
-        }
-
-        // Show the spinner
-        // document.getElementById('spinner').style.display = 'inline-block';
-        document.getElementById('spinner').style.display = 'block';
-        document.getElementById('response').style.display = 'none';
-
-        // Create the payload
-        const payload = {
-            message: inputText
-        };
-
-        try {
-            const response = await fetch("/" + endpoint, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(payload)
-            });
-
-            // Check for successful response
-            if (!response.ok) {
-                throw new Error('Request failed');
-            }
-
-            // Parse the JSON response
-            const data = await response.json();
-            document.getElementById('response').style.display = 'block';
-            document.getElementById('response').textContent = data.response || 'No response received.';
-        } catch (error) {
-            document.getElementById('response').style.display = 'block';
-            document.getElementById('response').textContent = `Error: ${error.message}`;
-        } finally {
-            // Hide the spinner after the request is completed
-            document.getElementById('spinner').style.display = 'none';
-        }
-    }
-
-    function checkKeypress(event){
-        if (event.key == "Enter") {
-            sendRequest();
-        }
-    }
-</script>
+<script src=script.js></script>
 </body>
 </html>
