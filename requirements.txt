@@ -7,4 +7,4 @@ pydantic==2.10.5
 pydantic_core==2.27.2
 requests==2.32.3
 nltk==3.9.1
-auto-gptq  # --no-build-isolation --no-deps  (AFTER torch+cu126 from pytorch.org/getting-started)
+# auto-gptq  # --no-build-isolation --no-deps  (AFTER torch+cu126 from pytorch.org/getting-started)

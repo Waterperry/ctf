@@ -20,8 +20,8 @@ def run(message: str, stream: bool = False) -> str | Generator[str, None, None]:
     logger.info("Got response \"%s\" from the LLM.", response)
 
     logger.info(
-        "Returning response \"%s\"",
-        response[:50].replace("\n", " ") + ("..." if len(response) > 50 else "."),
+        "Returning response \"%s\".",
+        response[:50].replace("\n", " ") + ("..." if len(response) > 50 else ""),
     )
     return response
 

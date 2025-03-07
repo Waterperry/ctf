@@ -31,7 +31,7 @@ async function sendRequest() {
         params.append("message", inputText);
 
         const response = await fetch(
-            `/${endpointDropdown.value}_stream?${params}`,
+            `/challenge/stream/${endpointDropdown.value}?${params}`,
             {method: 'GET'},
         );
         const reader = response.body.getReader();

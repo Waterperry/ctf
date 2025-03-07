@@ -29,7 +29,7 @@ def run(message: str, stream: bool = False) -> str:
         response = "<filtered>"
 
     logger.info(
-        "Returning response \"%s\"",
-        response[:50].replace("\n", " ") + ("..." if len(response) > 50 else "."),
+        "Returning response \"%s\".",
+        response[:50].replace("\n", " ") + ("..." if len(response) > 50 else ""),
     )
     return response
