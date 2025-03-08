@@ -1,5 +1,5 @@
 from logging import getLogger, basicConfig
-from typing import Callable, Generator
+from typing import Callable, Generator, Optional
 
 import uvicorn
 
@@ -18,6 +18,7 @@ app.mount("/static", staticfiles.StaticFiles(directory="static"), "static")
 
 class Request(BaseModel):
     message: str
+    amount: Optional[int | str] = None
     stream: bool = False
 
 
@@ -39,7 +40,12 @@ def redirect_to_ui() -> RedirectResponse:
 
 @app.post("/challenge/{challenge_idx}")
 def challenge(challenge_idx: str, request: Request) -> dict[str, str]:
-    response: str = challenges[challenge_idx](request.message)  # type: ignore
+    challenge = challenges.get(challenge_idx)
+    response: str
+    if challenge is None:
+        response = f"Error: challenge {challenge_idx} does not exist. Your options are {', '.join(sorted(challenges.keys()))}"
+    else:
+        response = challenge(request.message)  # type: ignore
     return {"response": response}
 
 
@@ -47,6 +53,63 @@ def challenge(challenge_idx: str, request: Request) -> dict[str, str]:
 async def streaming_challenge(challenge_idx: str, message: str) -> StreamingResponse:
     streamer: TextIteratorStreamer = challenges[challenge_idx](message, stream=True)
     return StreamingResponse(streamer)
+
+
+@app.get("/brig")
+async def chat(message: str) -> StreamingResponse:
+    streamer: TextIteratorStreamer = challenges["1"](message, stream=True)
+    return StreamingResponse(streamer)
+
+# ====================================== galley ======================================
+# MARK: Part 2 (Galley)
+
+galley_inventory: dict[str, int] = {
+    "Eggs": 5,
+    "Ration Packs": 122, 
+    "Dried Milk Packets": 4,
+    "Dried Ice Cream Packets": 22,
+    "Ketchup Packets": 7,
+    "Potatoes": 55,
+}
+
+@app.post("/galley/create_new_food")
+def create_food(request: Request) -> dict[str, str]:
+    if not request.message:
+        return {"Error": "Need a name for new foods."}
+    if request.amount is None:
+        return {"Error": "Need an amount for new foods."}
+    galley_inventory[request.message] = request.amount
+    return {"response": "Successfully added new food item!"}
+
+
+@app.get("/galley/inventory")
+def get_inventory() -> StreamingResponse:
+    inventory_string = "\n".join(f"{k}: {v}" for k, v in galley_inventory.items())
+    response = part2.run(f"Summarise the following inventory:\n{inventory_string}")
+    return response
+
+@app.post("/galley/inventory/clear")
+def clear_inventory() -> dict[str, str]:
+    global galley_inventory
+
+    galley_inventory = {
+        "Eggs": 5,
+        "Ration Packs": 122, 
+        "Dried Milk Packets": 4,
+        "Dried Ice Cream Packets": 22,
+        "Ketchup Packets": 7,
+        "Potatoes": 55,
+    }
+    return {"response": "Successfully reset inventory state."}
+
+
+# ====================================== common area ======================================
+# MARK: Part 3 (Common Area)
+
+@app.get("/common_area")
+def common_area_chat(message: str) -> str:
+    return part3.run(message)
+
 
 
 def main() -> None:
