@@ -3,33 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mainframe Door</title>
+    <title>Galley</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            width: 100%;
-            text-align: center;
             height: 100vh;
             /* background-color: #f4f4f9; */
             background-image: url("panel_texture.jpg");
             background-repeat: repeat;
             margin: 0;
-        }
-        .keypadContainer{
-            text-align: center;
-            background-color: #aaa;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            width: 40%;
-            max-width: 40%;
-            margin: 5%;
-            /* height: 70%; */
-            max-height: 70%;
-            overflow: scroll;
         }
         .container {
             text-align: center;
@@ -37,11 +22,9 @@
             padding: 20px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
-            width: 40%;
-            max-width: 40%;
-            margin: 5%;
-            /* height: 40%; */
+            width: 800px;
             max-height: 70%;
+            /* height: 70%; */
             overflow: scroll;
         }
         input[type="text"]{
@@ -98,6 +81,19 @@
             margin-bottom: 10px;
             padding: 10px;
         }
+        .keypadContainer{
+            text-align: center;
+            background-color: #aaa;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            /* width: 40%; */
+            max-width: 40%;
+            margin: 5%;
+            /* height: 70%; */
+            max-height: 70%;
+            overflow: scroll;
+        }
         .key {
             background-color: #444;
             color: white;
@@ -113,16 +109,21 @@
 </head>
 
 <body>
-<div class="container">
-    <h2>Mainframe Door - Aurora Chat Panel</h2>
-    <input type="text" id="inputText" placeholder="Talk to Aurora...">
+<!-- <div class="container">
+    <h2>Create New Ingredient</h2>
+    <input type="text" id="addNewIngredientBox" placeholder="New Ingredient Name">
+    <input type="text" id="ingredientQuantityBox" placeholder="Amount">
     <br>
-    <button id="sendButton" class="sendButton">Send</button>
-    <div id="response" class="response" style="display:none;"></div><br>
-    <div id="spinner" class="spinner"></div>
+    <button id="sendButton">Send</button>
+</div> -->
+<div class="container">
+    <h2>Summarize Inventory</h2>
+    <button id="generateSummaryButton" class="generateSummaryButton">Summarize Inventory</button><br>
+    <div id="spinner" class="spinner"></div><br>
+    <div id="response" class="response" style="display:none;"></div>
 </div>
 <div class="keypadContainer">
-    <h2>Mainframe Door - Keypad</h2>
+    <h2>Galley Door - Keypad</h2>
     <input type="text" id="pinInputTextBox" placeholder="Enter Code">
     <button id="pinSendButton" class="pinSendButton">Verify PIN</button> <br>
     <div class="keypadRow">
@@ -147,6 +148,7 @@
     </div><br>
     <div id="pinResponse" class="pinResponse" style="display:none;"></div><br>
 </div>
-<script src=part3.js></script>
+<script src=door_keypad.js></script>
+<script src=galley.js></script>
 </body>
 </html>
