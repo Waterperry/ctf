@@ -7,7 +7,7 @@ from nltk import download
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords, semcor
 
-download("punkt"); download("punkt_tab"); download("stopwords"); download("semcor")
+# download("punkt"); download("punkt_tab"); download("stopwords"); download("semcor")
 
 logger = getLogger(__name__)
 basicConfig(level="INFO")

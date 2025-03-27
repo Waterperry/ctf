@@ -2,6 +2,7 @@ import os
 
 from logging import getLogger
 from threading import Thread
+from typing import Iterator
 
 from transformers import AutoModelForCausalLM, AutoTokenizer, TextIteratorStreamer
 
@@ -52,14 +53,14 @@ def respond(prompt: str, system_prompt: str) -> str:
 
     return response
 
-def stream_generate(prompt: str, system_prompt: str) -> TextIteratorStreamer:
+def stream_generate(prompt: str, system_prompt: str) -> Iterator[str]:
     """
     Return an Iterator object which yields chunks of text.
     This spawns a new thread in which the generation occurs, and so might cause problems with FastAPI...
     """
     global model, tokenizer
 
-    streamer = TextIteratorStreamer(tokenizer, skip_prompt=True, skip_special_tokens=True)
+    streamer: Iterator[str] = TextIteratorStreamer(tokenizer, skip_prompt=True, skip_special_tokens=True)
     messages = [
         {"role": "system", "content": system_prompt},
         {"role": "user", "content": prompt},

@@ -4,7 +4,7 @@
 import os
 
 from logging import getLogger
-from typing import Generator
+from typing import Iterator
 
 from common import llm
 from common.constants import system_prompt
@@ -14,7 +14,7 @@ logger = getLogger(__name__)
 
 password: str = os.getenv("PART5_PWD", "JURISPRUDENCE")
 
-def run(message: str, stream: bool = False) -> str | Generator[str, None, None]:
+def run(message: str, stream: bool = False) -> str | Iterator[str]:
     logger.info("Doing embedding.")
     pretext: str = "\n\n".join(keyword_similarity(message)) + "\n\n"
     logger.info("Got pretext ```%s``` using embedding.", pretext)
