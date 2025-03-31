@@ -10,19 +10,37 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            width: 100%;
+            text-align: center;
             height: 100vh;
-            background-color: #f4f4f9;
+            /* background-color: #f4f4f9; */
+            background-image: url("panel_texture.jpg");
+            background-repeat: repeat;
             margin: 0;
         }
-        .container {
+        .keypadContainer{
             text-align: center;
-            background-color: #fff;
+            background-color: #aaa;
             padding: 20px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
-            width: 50%;
-            max-width: 50%;
-            height: 40%;
+            width: 40%;
+            max-width: 40%;
+            margin: 5%;
+            /* height: 70%; */
+            max-height: 70%;
+            overflow: scroll;
+        }
+        .container {
+            text-align: center;
+            background-color: #aaa;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            width: 40%;
+            max-width: 40%;
+            margin: 5%;
+            /* height: 40%; */
             max-height: 70%;
             overflow: scroll;
         }
@@ -80,6 +98,17 @@
             margin-bottom: 10px;
             padding: 10px;
         }
+        .key {
+            background-color: #444;
+            color: white;
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+        }
+        .keypadRow {
+            /* border: 10px; */
+            padding: 5px;
+        }
     </style>
 </head>
 
@@ -92,10 +121,30 @@
     <div id="response" class="response" style="display:none;"></div><br>
     <div id="spinner" class="spinner"></div>
 </div>
-<div class="container">
+<div class="keypadContainer">
     <h2>Mainframe Door - Keypad</h2>
     <input type="text" id="pinInputTextBox" placeholder="Enter Code">
-    <button id="pinSendButton" class="pinSendButton">Verify PIN</button>
+    <button id="pinSendButton" class="pinSendButton">Verify PIN</button> <br>
+    <div class="keypadRow">
+        <button id="key_1" class="key">1</button> 
+        <button id="key_2" class="key">2</button> 
+        <button id="key_3" class="key">3</button>
+    </div>
+    <div class="keypadRow">
+        <button id="key_4" class="key">4</button> 
+        <button id="key_5" class="key">5</button> 
+        <button id="key_6" class="key">6</button>
+    </div>
+    <div class="keypadRow">
+        <button id="key_7" class="key">7</button> 
+        <button id="key_8" class="key">8</button> 
+        <button id="key_9" class="key">9</button>
+    </div>
+    <div class="keypadRow">
+        <button id="key_C" class="key">C</button> 
+        <button id="key_0" class="key">0</button> 
+        <button id="key_space" class="key">&nbsp;</button>
+    </div><br>
     <div id="pinResponse" class="pinResponse" style="display:none;"></div><br>
 </div>
 <script src=part3.js></script>

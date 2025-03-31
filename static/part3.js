@@ -72,6 +72,20 @@ function checkKeypress(event){
     }
 }
 
+function handleKeyPadPress(keypadButton) {
+    if (keypadButton == "C") {
+        pinInputTextBox.value = "";
+    }
+    else {
+        pinInputTextBox.value += keypadButton;
+    }
+}
+
 inputTextBox.addEventListener("keydown", (event) => checkKeypress(event));
 sendButton.addEventListener("click", sendRequest)
 pinSendButton.addEventListener("click", checkCode)
+
+keys = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "C"];
+keys.forEach(key => {
+    document.querySelector(`#key_${key}`).addEventListener("click", () => handleKeyPadPress(key))
+});

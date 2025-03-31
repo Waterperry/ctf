@@ -1,9 +1,9 @@
 // DOM elements
 const responseBox = document.querySelector("#response");
-const newIngredientName = document.querySelector("#addNewIngredientBox");
-const newIngredientQuantity = document.querySelector("#ingredientQuantityBox");
+// const newIngredientName = document.querySelector("#addNewIngredientBox");
+// const newIngredientQuantity = document.querySelector("#ingredientQuantityBox");
 const spinner = document.querySelector("#spinner");
-const sendButton = document.querySelector("#sendButton");
+// const sendButton = document.querySelector("#sendButton");
 const generateButton = document.querySelector("#generateSummaryButton");
 
 // Utils
@@ -12,42 +12,42 @@ const decoder = new TextDecoder();
 const create_endpoint = "/galley/create_new_food";
 const get_endpoint = "/galley/inventory";
 
-async function sendRequest() {
-    const ingredient_name = newIngredientName.value;
-    const ingredient_amount = newIngredientQuantity.value;
-    if ((!ingredient_name.trim()) || (!ingredient_amount.trim())) {
-        alert("New ingredients require a name AND a quantity descriptor!");
-        return;
-    }
+// async function sendRequest() {
+//     // const ingredient_name = newIngredientName.value;
+//     const ingredient_amount = newIngredientQuantity.value;
+//     if ((!ingredient_name.trim()) || (!ingredient_amount.trim())) {
+//         alert("New ingredients require a name AND a quantity descriptor!");
+//         return;
+//     }
 
-    try {
-        responseBox.textContent = "";
-        const params = new URLSearchParams();
-        params.append("message", ingredient_name);
-        params.append("amount", ingredient_amount);
+//     try {
+//         responseBox.textContent = "";
+//         const params = new URLSearchParams();
+//         params.append("message", ingredient_name);
+//         params.append("amount", ingredient_amount);
 
-        const response = await fetch(
-            `${create_endpoint}`,
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    "message": ingredient_name, "amount": ingredient_amount
-                })
-            }
-        );
-        if (response.status == 200){
-            alert("Ingredient added successfully!");
-        }
-        else {
-            alert(response.text);
-        }
-    }
-    catch {
-    }
-}
+//         const response = await fetch(
+//             `${create_endpoint}`,
+//             {
+//                 method: 'POST',
+//                 headers: {
+//                     'Content-Type': 'application/json'
+//                 },
+//                 body: JSON.stringify({
+//                     "message": ingredient_name, "amount": ingredient_amount
+//                 })
+//             }
+//         );
+//         if (response.status == 200){
+//             alert("Ingredient added successfully!");
+//         }
+//         else {
+//             alert(response.text);
+//         }
+//     }
+//     catch {
+//     }
+// }
 
 async function getSummary() {
     responseBox.style.display = "block";
@@ -89,6 +89,6 @@ function checkKeypress(event){
 }
 
 // Handlers and listeners
-sendButton.addEventListener("click", () => sendRequest());
-newIngredientQuantity.addEventListener("keydown", (event) => checkKeypress(event));
+// sendButton.addEventListener("click", () => sendRequest());
+// newIngredientQuantity.addEventListener("keydown", (event) => checkKeypress(event));
 generateButton.addEventListener("click", getSummary);

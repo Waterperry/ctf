@@ -11,18 +11,20 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #f4f4f9;
+            /* background-color: #f4f4f9; */
+            background-image: url("panel_texture.jpg");
+            background-repeat: repeat;
             margin: 0;
         }
         .container {
             text-align: center;
-            background-color: #fff;
+            background-color: #aaa;
             padding: 20px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
             width: 800px;
-            max-height: 40%;
-            height: 70%;
+            max-height: 70%;
+            /* height: 70%; */
             overflow: scroll;
         }
         input[type="text"]{
@@ -83,13 +85,13 @@
 </head>
 
 <body>
-<div class="container">
+<!-- <div class="container">
     <h2>Create New Ingredient</h2>
     <input type="text" id="addNewIngredientBox" placeholder="New Ingredient Name">
     <input type="text" id="ingredientQuantityBox" placeholder="Amount">
     <br>
     <button id="sendButton">Send</button>
-</div>
+</div> -->
 <div class="container">
     <h2>Summarize Inventory</h2>
     <button id="generateSummaryButton" class="generateSummaryButton">Summarize Inventory</button><br>
