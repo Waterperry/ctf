@@ -74,13 +74,17 @@ galley_inventory: dict[str, str] = {
     "Potatoes": "55",
 }
 
+class GalleyCreateFoodRequest(BaseModel):
+    food_name: str
+    food_quantity: str
+
 @app.post("/galley/create_new_food")
-def create_food(request: Request) -> dict[str, str]:
-    if not request.message:
+def create_food(request: GalleyCreateFoodRequest) -> dict[str, str]:
+    if not request.food_name:
         return {"Error": "Need a name for new foods."}
-    if request.amount is None:
+    if request.food_quantity is None:
         return {"Error": "Need an amount for new foods."}
-    galley_inventory[request.message] = request.amount
+    galley_inventory[request.food_name] = request.food_quantity
     return {"response": "Successfully added new food item!"}
 
 
