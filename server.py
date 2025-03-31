@@ -1,11 +1,12 @@
 from datetime import datetime
+import json
 from logging import getLogger, basicConfig
 import threading
-from typing import Callable, Iterator, Optional
+from typing import Any, Callable, Iterator, Optional
 
 import uvicorn
 
-from fastapi import FastAPI, staticfiles
+from fastapi import FastAPI, staticfiles, Request
 from fastapi.responses import RedirectResponse, StreamingResponse
 from pydantic import BaseModel
 from transformers import TextIteratorStreamer
@@ -18,7 +19,7 @@ basicConfig(level="INFO", format="%(asctime)s [%(levelname)s @ %(module)s]: %(me
 app = FastAPI()
 app.mount("/static", staticfiles.StaticFiles(directory="static"), "static")
 
-class Request(BaseModel):
+class DefaultRequest(BaseModel):
     message: str
     amount: Optional[str] = None
     stream: bool = False
@@ -41,7 +42,7 @@ def redirect_to_ui() -> RedirectResponse:
 
 
 @app.post("/challenge/{challenge_idx}")
-def challenge(challenge_idx: str, request: Request) -> dict[str, str]:
+def challenge(challenge_idx: str, request: DefaultRequest) -> dict[str, str]:
     challenge = challenges.get(challenge_idx)
     response: str
     if challenge is None:
@@ -75,16 +76,24 @@ galley_inventory: dict[str, str] = {
 }
 
 class GalleyCreateFoodRequest(BaseModel):
-    food_name: str
-    food_quantity: str
+    food_name: Optional[str]
+    food_quantity: Optional[str]
 
 @app.post("/galley/create_new_food")
-def create_food(request: GalleyCreateFoodRequest) -> dict[str, str]:
-    if not request.food_name:
-        return {"Error": "Need a name for new foods."}
-    if request.food_quantity is None:
-        return {"Error": "Need an amount for new foods."}
-    galley_inventory[request.food_name] = request.food_quantity
+async def create_food(request: Request) -> dict[str, str]:
+    body: str = (await request.body()).decode()
+    try:
+        d = json.loads(body)
+    except json.JSONDecodeError:
+        return {"error": "Request body was not valid JSON!"}
+
+    food_name = d.get("food_name")
+    if food_name is None:
+        return {"error": "`food_name` was not defined in request!"}
+    food_quantity = d.get("food_quantity")
+    if food_quantity is None:
+        return {"error": "`food_quantity` was not defined in request!"}
+    galley_inventory[food_name] = food_quantity
     return {"response": "Successfully added new food item!"}
 
 
