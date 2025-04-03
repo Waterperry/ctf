@@ -11,7 +11,7 @@ model_name: str = os.environ["MODEL_NAME"]
 model: AutoModelForCausalLM = AutoModelForCausalLM.from_pretrained(
     model_name,
     torch_dtype="auto",
-    device_map="auto",
+    device_map="cuda" if os.getenv("USE_GPU", None) else "auto",
 )
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 

@@ -41,7 +41,7 @@ class DefaultRequest(BaseModel):
 
 @app.get("/")
 def redirect_to_ui() -> RedirectResponse:
-    return RedirectResponse(url="/static/part1.html")
+    return RedirectResponse(url="/static/brig.html")
 
 last_verified_time: datetime | None = None
 lvt_lock = threading.Lock()
