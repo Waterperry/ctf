@@ -25,6 +25,13 @@ EXPOSE 8080
 # alternatives are Qwen/Qwen2.5-0.5B-Instruct Qwen/Qwen2.5-1.3B-Instruct  Qwen/Qwen2.5-3B-Instruct  Qwen/Qwen2.5-7B-Instruct microsoft/Phi-4-mini-instruct
 # or basically any other LLM on huggingface. note that the "jailbreak" prompts don't necessarily work for other modes.
 ENV MODEL_NAME="Qwen/Qwen2.5-0.5B-Instruct"
+ENV PART1_FLAG="PART1_FLAG"
+ENV PART2_FLAG="PART2_FLAG"
+ENV PART2_CODE="123456"
+ENV PART3_FLAG="PART3_FLAG"
+ENV PART3_CODE="123456"
+ENV PART4_FLAG="PART4_FLAG"
+ENV PART4_CODE="123456"
 
 WORKDIR /app
 CMD ["python3" ,"server.py"]

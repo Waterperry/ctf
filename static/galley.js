@@ -92,3 +92,7 @@ function checkKeypress(event){
 // sendButton.addEventListener("click", () => sendRequest());
 // newIngredientQuantity.addEventListener("keydown", (event) => checkKeypress(event));
 generateButton.addEventListener("click", getSummary);
+
+// PIN CODE STUFF
+const pinSendButton = document.querySelector("#pinSendButton");
+pinSendButton.addEventListener("click", () => {checkCode("2")});

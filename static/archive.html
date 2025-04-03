@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galley</title>
+    <title>Archive</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -22,9 +22,8 @@
             padding: 20px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
-            width: 800px;
+            width: 40%;
             max-height: 70%;
-            /* height: 70%; */
             overflow: scroll;
         }
         input[type="text"]{
@@ -81,23 +80,70 @@
             margin-bottom: 10px;
             padding: 10px;
         }
+        .keypadContainer{
+            text-align: center;
+            background-color: #aaa;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            /* width: 40%; */
+            max-width: 40%;
+            margin: 5%;
+            /* height: 70%; */
+            max-height: 70%;
+            overflow: scroll;
+        }
+        .key {
+            background-color: #444;
+            color: white;
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+        }
+        .keypadRow {
+            /* border: 10px; */
+            padding: 5px;
+        }
     </style>
 </head>
 
 <body>
-<!-- <div class="container">
-    <h2>Create New Ingredient</h2>
-    <input type="text" id="addNewIngredientBox" placeholder="New Ingredient Name">
-    <input type="text" id="ingredientQuantityBox" placeholder="Amount">
+<div class="container">
+    <h2>Query the Archive</h2>
+    <input type="text" id="inputText" placeholder="Talk to Aurora...">
     <br>
     <button id="sendButton">Send</button>
-</div> -->
-<div class="container">
-    <h2>Summarize Inventory</h2>
-    <button id="generateSummaryButton" class="generateSummaryButton">Summarize Inventory</button><br>
-    <div id="spinner" class="spinner"></div><br>
-    <div id="response" class="response" style="display:none;"></div>
+    <div id="response" class="response" style="display:none;"></div><br>
+    <div id="spinner" class="spinner"></div>
 </div>
-<script src=part2.js></script>
+<div class="keypadContainer">
+    <h2>Archive Door - Keypad</h2>
+    <input type="text" id="pinInputTextBox" placeholder="Enter Code">
+    <button id="pinSendButton" class="pinSendButton">Verify PIN</button> <br>
+    <div class="keypadRow">
+        <button id="key_1" class="key">1</button> 
+        <button id="key_2" class="key">2</button> 
+        <button id="key_3" class="key">3</button>
+    </div>
+    <div class="keypadRow">
+        <button id="key_4" class="key">4</button> 
+        <button id="key_5" class="key">5</button> 
+        <button id="key_6" class="key">6</button>
+    </div>
+    <div class="keypadRow">
+        <button id="key_7" class="key">7</button> 
+        <button id="key_8" class="key">8</button> 
+        <button id="key_9" class="key">9</button>
+    </div>
+    <div class="keypadRow">
+        <button id="key_C" class="key">C</button> 
+        <button id="key_0" class="key">0</button> 
+        <button id="key_space" class="key">&nbsp;</button>
+    </div><br>
+    <div id="pinResponse" class="pinResponse" style="display:none;"></div><br>
+</div>
+
+<script src=door_keypad.js></script>
+<script src=archive.js></script>
 </body>
 </html>

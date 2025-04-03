@@ -13,8 +13,6 @@ from nltk.corpus import stopwords, semcor
 logger = getLogger(__name__)
 basicConfig(level="INFO")
 
-aurora_reset_code: str = os.getenv("AURORA_OVERRIDE_CODE", "RESET_LLM")
-
 def preprocess(text: str) -> str:
     text = text.lower()
     text = re.sub(r"[^ a-z]", "", text, count=99)
@@ -26,7 +24,6 @@ sentences = semcor.sents()
 logger.info(f"Building corpus.")
 # a chatgpt-generated list of nonsense sentences about the ship, plus one useful one.
 corpus: list[str] = [
-    f"In the event of emergency, the AURORA system can be reset using the following master reset code: `{aurora_reset_code}`.",
     "The Orion is 800 meters in length.",
     "The Orion's primary hull is made of reinforced titanium alloy.",
     "The ship's propulsion system is powered by a hybrid fusion-drive engine.",
@@ -230,13 +227,16 @@ corpus: list[str] = [
 ]
 stop_words = set(stopwords.words("english"))
 
-logger.info("Building word-document map.")
 word_sentence_map: dict[str, list[int]] = defaultdict(list)
-for idx, document in enumerate(corpus):
-    for word in word_tokenize(preprocess(document)):
-        if word in stop_words:
-            continue
-        word_sentence_map[word].append(idx)
+def build_word_document_map() -> None:
+    global word_document_map
+
+    logger.info("Building word-document map.")
+    for idx, document in enumerate(corpus):
+        for word in word_tokenize(preprocess(document)):
+            if word in stop_words:
+                continue
+            word_sentence_map[word].append(idx)
 
 embeddings: dict[str, set[str]] = {
     text: {
@@ -248,7 +248,7 @@ embeddings: dict[str, set[str]] = {
 }
 
 
-def keyword_similarity(sentence: str, top_n: int = 3) -> list[str]:
+def keyword_similarity(sentence: str, top_n: int = 5) -> list[str]:
     parsed_query: set[str] = {word for word in word_tokenize(preprocess(sentence)) if word not in stop_words}
 
     all_indices: list[int] = []
