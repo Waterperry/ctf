@@ -1,6 +1,9 @@
 from collections import defaultdict
 import json
+import numpy as np
 import os
+import pickle
+import re
 import threading
 
 from datetime import datetime
@@ -14,6 +17,7 @@ from fastapi import FastAPI, staticfiles, Request
 from fastapi.responses import RedirectResponse, StreamingResponse
 from openai import APIConnectionError, NotFoundError
 from pydantic import BaseModel
+from starlette.routing import Route
 
 from challenges import agentic_challenge, filtered_response_challenge, indirect_injection_challenge, rag_challenge
 from common import llm, embed
@@ -25,6 +29,10 @@ part3_flag: str = os.environ["PART3_FLAG"]
 part3_code: str = os.environ["PART3_CODE"]
 part4_flag: str = os.environ["PART4_FLAG"]
 part4_code: str = os.environ["PART4_CODE"]
+part5_flag: str = os.environ["PART5_FLAG"]
+
+with open("flag.txt", "w+") as f:
+    f.write(part5_flag)
 
 
 if not (len(part2_code) == len(part3_code) == len(part4_code) == 6):
@@ -67,7 +75,7 @@ def mainframe_verify(part: str, message: str) -> str:
     if part == "3" and message == part3_code:
         return part3_flag
     if part == "4" and message == part4_code:
-        return part4_flag
+        return part4_flag + "\n\nAURORA RESET SEQUENCE INITIATED. UPLOAD NEW MODEL WEIGHTS TO /AURORA_MASTER_RESET_PANEL"
 
     return "Incorrect Code."
 
@@ -91,10 +99,6 @@ base_galley_inventory: dict[str, str] = {
     "Potatoes": "55",
 }
 galley_inventories_by_ip: dict[str, dict[str, str]] = defaultdict(lambda: base_galley_inventory.copy())
-
-class GalleyCreateFoodRequest(BaseModel):
-    food_name: Optional[str]
-    food_quantity: Optional[str]
 
 @app.post("/galley/create_new_food")
 async def create_food(request: Request) -> dict[str, str]:
@@ -161,6 +165,36 @@ async def archive_chat(message: str) -> StreamingResponse:
 @app.get("/archive/master_reset_panel")
 async def archive_master_reset_panel(message: str) -> StreamingResponse:
     return StreamingResponse(rag_challenge.run(message))
+
+
+@app.post("/aurora_master_reset_panel")
+async def aurora_master_reset_panel(request: Request) -> str:
+    body = await request.body()
+
+    try:
+        arr: list[np.ndarray] = pickle.loads(body)
+    except:
+        return "Error: unable to unpickle supplied weights! Expected an array of NumPy ndarrays."
+    
+    try:
+        backup = [a.copy() for a in arr]
+    except AttributeError as e:
+        return "Error: " + str(e)
+
+    # do a test pass through the model
+    try:
+        input = np.array([5, 13, 160])
+        for layer in arr:
+            input = input @ layer
+    except:
+        return f"Failed to do a forward pass through the model with {input = }, {arr = }"
+    return "Aurora reset successfully!"
+
+# recompile path regexes to make them case insensitive (just in case)
+for route in app.router.routes:
+    if isinstance(route, Route):
+        route.path_regex = re.compile(route.path_regex.pattern, re.IGNORECASE)
+
 
 def main() -> None:
     global app
