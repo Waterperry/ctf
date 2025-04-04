@@ -8,8 +8,10 @@ from openai import OpenAI
 
 logger = getLogger(__name__)
 model: str = os.environ["MODEL_NAME"]
+llm_endpoint: str = os.getenv("LLM_ENDPOINT", "http://localhost:11434/v1")
+llm_api_key: str = os.getenv("LLM_API_KEY", "ollama")
 
-client = OpenAI(base_url="http://localhost:11434/v1", api_key="ollama")
+client = OpenAI(base_url=llm_endpoint, api_key=llm_api_key)
 
 def respond(prompt: str, system_prompt: str) -> str:
     global client, model
