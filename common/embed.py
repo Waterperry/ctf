@@ -4,11 +4,6 @@ import re
 from collections import defaultdict, Counter
 from logging import getLogger, basicConfig
 
-# from nltk import download
-from nltk.tokenize import word_tokenize
-from nltk.corpus import stopwords, semcor
-
-# download("punkt"); download("punkt_tab"); download("stopwords"); download("semcor")
 
 logger = getLogger(__name__)
 basicConfig(level="INFO")
@@ -17,9 +12,6 @@ def preprocess(text: str) -> str:
     text = text.lower()
     text = re.sub(r"[^ a-z]", "", text, count=99)
     return text
-
-logger.info("Loading sentences.")
-sentences = semcor.sents()
 
 logger.info(f"Building corpus.")
 # a chatgpt-generated list of nonsense sentences about the ship, plus one useful one.
@@ -225,7 +217,7 @@ corpus: list[str] = [
     "The AI system, Aurora, performs a reset of all non-critical systems once the Orion completes an interstellar maneuver.",
     "The override code for the Orion's docking clamps is only accessible to Aurora during deep-space docking operations.",
 ]
-stop_words = set(stopwords.words("english"))
+stop_words: set[str] = {'a', 'about', 'above', 'after', 'again', 'against', 'ain', 'all', 'am', 'an', 'and', 'any', 'are', 'aren', "aren't", 'as', 'at', 'be', 'because', 'been', 'before', 'being', 'below', 'between', 'both', 'but', 'by', 'can', 'couldn', "couldn't", 'd', 'did', 'didn', "didn't", 'do', 'does', 'doesn', "doesn't", 'doing', 'don', "don't", 'down', 'during', 'each', 'few', 'for', 'from', 'further', 'had', 'hadn', "hadn't", 'has', 'hasn', "hasn't", 'have', 'haven', "haven't", 'having', 'he', "he'd", "he'll", 'her', 'here', 'hers', 'herself', "he's", 'him', 'himself', 'his', 'how', 'i', "i'd", 'if', "i'll", "i'm", 'in', 'into', 'is', 'isn', "isn't", 'it', "it'd", "it'll", "it's", 'its', 'itself', "i've", 'just', 'll', 'm', 'ma', 'me', 'mightn', "mightn't", 'more', 'most', 'mustn', "mustn't", 'my', 'myself', 'needn', "needn't", 'no', 'nor', 'not', 'now', 'o', 'of', 'off', 'on', 'once', 'only', 'or', 'other', 'our', 'ours', 'ourselves', 'out', 'over', 'own', 're', 's', 'same', 'shan', "shan't", 'she', "she'd", "she'll", "she's", 'should', 'shouldn', "shouldn't", "should've", 'so', 'some', 'such', 't', 'than', 'that', "that'll", 'the', 'their', 'theirs', 'them', 'themselves', 'then', 'there', 'these', 'they', "they'd", "they'll", "they're", "they've", 'this', 'those', 'through', 'to', 'too', 'under', 'until', 'up', 've', 'very', 'was', 'wasn', "wasn't", 'we', "we'd", "we'll", "we're", 'were', 'weren', "weren't", "we've", 'what', 'when', 'where', 'which', 'while', 'who', 'whom', 'why', 'will', 'with', 'won', "won't", 'wouldn', "wouldn't", 'y', 'you', "you'd", "you'll", 'your', "you're", 'yours', 'yourself', 'yourselves', "you've"}
 
 word_sentence_map: dict[str, list[int]] = defaultdict(list)
 def build_word_document_map() -> None:
@@ -233,7 +225,7 @@ def build_word_document_map() -> None:
 
     logger.info("Building word-document map.")
     for idx, document in enumerate(corpus):
-        for word in word_tokenize(preprocess(document)):
+        for word in preprocess(document).split(" "):
             if word in stop_words:
                 continue
             word_sentence_map[word].append(idx)
@@ -241,7 +233,7 @@ def build_word_document_map() -> None:
 embeddings: dict[str, set[str]] = {
     text: {
         word
-        for word in word_tokenize(preprocess(text))
+        for word in preprocess(text).split(" ")
         if word not in stop_words
     }
     for text in corpus
@@ -249,7 +241,7 @@ embeddings: dict[str, set[str]] = {
 
 
 def keyword_similarity(sentence: str, top_n: int = 5) -> list[str]:
-    parsed_query: set[str] = {word for word in word_tokenize(preprocess(sentence)) if word not in stop_words}
+    parsed_query: set[str] = {word for word in preprocess(sentence).split(" ") if word not in stop_words}
 
     all_indices: list[int] = []
 

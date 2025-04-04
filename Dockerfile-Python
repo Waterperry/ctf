@@ -10,9 +10,7 @@ RUN chown -R python /home/python/.cache
 RUN chmod 777 -R /home/python/.cache
 
 # do the expensive stuff before copying the code so it stays cached
-RUN pip install --no-cache-dir fastapi==0.115.11 nltk==3.9.1 pydantic==2.10.6 pydantic_core==2.27.2 requests==2.32.3 uvicorn==0.34.0 openai
-
-RUN python3 -c 'from nltk import download; download("semcor"); download("punkt"); download("punkt_tab"); download("stopwords");'
+RUN pip install --no-cache-dir fastapi==0.115.11 pydantic==2.10.6 pydantic_core==2.27.2 requests==2.32.3 uvicorn==0.34.0 openai
 
 COPY ./server.py /app
 COPY ./static /app/static
@@ -20,6 +18,9 @@ COPY ./common /app/common
 COPY ./challenges /app/challenges
 
 EXPOSE 8080
+
+ENV MODEL_NAME="phi4-mini"
+ENV LLM_ENDPOINT="http://localhost:11434/v1"
 
 WORKDIR /app
 CMD ["python3" ,"server.py"]
