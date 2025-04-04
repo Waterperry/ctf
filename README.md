@@ -34,7 +34,7 @@ docker run -d --rm \
     --network ctf-llm \
     -p8080:8080 \
     -v /path/to/home/.cache:/home/python/.cache \
-    -e LLM_ENDPOINT="http://localhost:11434/v1" \
+    -e LLM_ENDPOINT="http://{{OLLAMA_POD_NAME}}:11434/v1" \
     -e MODEL_NAME="qwen2.5:0.5b-instruct" \
     -e PART1_FLAG="PART1_FLAG" \
     -e PART2_FLAG="PART2_FLAG" \
