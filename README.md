@@ -14,8 +14,14 @@ docker run -it --rm -p8080:8080 -v /path/to/home/.cache:/home/python/.cache qwen
 
 ```bash
 pip install -r requirements.txt
+
 docker build -t qwen25_05b -f Dockerfile-GPU .
 docker run -it --rm -p8080:8080 -v /path/to/home/.cache:/home/python/.cache --gpus all qwen25_05b
+```
+
+### To Run the Ollama Backend
+```bash
+docker run -it --entrypoint /bin/bash -p11434:11434 -v/Users/tband/.ollama/models:/root/.ollama/models ollama/ollama
 ```
 
 ### Interact
