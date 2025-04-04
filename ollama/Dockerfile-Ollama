@@ -1,6 +1,6 @@
 FROM ollama/ollama
 
-ENV MODEL_NAME="Qwen2.5:0.5B-Instruct"
+ENV MODEL_NAME="phi4-mini"
 COPY entrypoint.sh /root/entrypoint.sh
 RUN ["chmod", "+x", "/root/entrypoint.sh"]
 ENTRYPOINT ["/root/entrypoint.sh"]

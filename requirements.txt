@@ -1,8 +1,5 @@
-# not read directly into docker image. if changing here, change the dockerfile too
-# auto-gptq  # --no-build-isolation --no-deps  (AFTER torch+cu126 from pytorch.org/getting-started)
 accelerate==1.4.0
 fastapi==0.115.11
-nltk==3.9.1
 pydantic==2.10.6
 pydantic_core==2.27.2
 requests==2.32.3

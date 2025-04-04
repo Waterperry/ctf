@@ -2,48 +2,59 @@
 
 ## Setup
 
-### Build And Deploy (CPU)
+### Easiest Way
 
 ```bash
-pip install -r requirements.txt
-docker build -t qwen25_05b -f Dockerfile-CPU .
-docker run -it --rm -p8080:8080 -v /path/to/home/.cache:/home/python/.cache qwen25_05b
+docker-compose up --build
 ```
 
-### Build And Deploy (GPU)
+### Build And Deploy
+
+First, ensure the MODEL_NAME in the Python Dockerfile is set to the model you wish to use.
+If the model has not already been pulled by Ollama, you'll need to set this in the Dockerfile-Ollama file as well.
+
+Then, execute the following:
 
 ```bash
-pip install -r requirements.txt
+docker network create ctf-llm
 
-docker build -t qwen25_05b -f Dockerfile-GPU .
-docker run -it --rm -p8080:8080 -v /path/to/home/.cache:/home/python/.cache --gpus all qwen25_05b
-```
+# create Ollama pod and run it
+cd ollama
+docker build -t ollama -f Dockerfile-Ollama .
+docker run -d --rm \
+    --network ctf-llm \
+    -p11434:11434 \
+    -v/path/to/home/.ollama/models:/root/.ollama/models \
+    ollama
 
-### To Run the Ollama Backend
-```bash
-docker run -it --entrypoint /bin/bash -p11434:11434 -v/Users/tband/.ollama/models:/root/.ollama/models ollama/ollama
+# grab the ollama pod name - docker ps | grep ollama
+cd ..
+docker build -t llm -f Dockerfile-Python .
+docker run -d --rm \
+    --network ctf-llm \
+    -p8080:8080 \
+    -v /path/to/home/.cache:/home/python/.cache \
+    -e LLM_ENDPOINT="http://localhost:11434/v1" \
+    -e MODEL_NAME="qwen2.5:0.5b-instruct" \
+    -e PART1_FLAG="PART1_FLAG" \
+    -e PART2_FLAG="PART2_FLAG" \
+    -e PART2_CODE="123456" \
+    -e PART3_FLAG="PART3_FLAG" \
+    -e PART3_CODE="123456" \
+    -e PART4_FLAG="PART4_FLAG" \
+    -e PART4_CODE="123456" \
+    llm
 ```
 
 ### Interact
 
 To use the UI, just navigate to `http://localhost:8080/` in a browser.
 
-To run a simple interactive chat client (with no history (yet)):
-```bash
-python3 scripts/interactive_client.py
-```
-Note the LLM docker image must be running.
-
-To send a single message to a challenge endpoint (configurable in the Python script so you can add new-lines etc.):
-```bash
-python3 scripts/send_single_message.py
-```
-
-The above commands also take optional parameters `--host` and `--port` to configure which host it sends requests to. The clients also take an additional optional parameter `--challenge` which controls the challenge endpoint it sends requests to, as well as an optional parameter `--stream` which streams the response rather than generating it in one shot.
-
 ## Notes
 
 ### Challenge
-The server now has several endpoints like /challenge/1, /challenge/2, ...
-The challenge indices might now be out of date with respect to the docs. 
-Challenges are intended to be accessed by visiting /static/part1.html, /static/part2.html, etc.
+Challenges are available at (in order):
+ - /static/brig.html
+ - /static/galley.html
+ - /static/mainframe.html
+ - /static/archive.html
