@@ -1,0 +1,44 @@
+services:
+  python:
+    build: 
+      context: .
+      dockerfile: Dockerfile-Python
+    environment:
+      LLM_ENDPOINT: "http://ollama:11434/v1"
+      MODEL_NAME: "qwen2.5:0.5b-instruct"
+      PART1_FLAG: "PART1_FLAG"
+      PART2_FLAG: "PART2_FLAG"
+      PART2_CODE: "123456"
+      PART3_FLAG: "PART3_FLAG"
+      PART3_CODE: "123456"
+      PART4_FLAG: "PART4_FLAG"
+      PART4_CODE: "123456"
+    networks:
+      - internal
+    ports: 
+      - "8080:8080"
+    volumes:
+      - ../.cache:/home/python/.cache
+  ollama:
+    build: 
+      context: ./ollama
+      dockerfile: Dockerfile-Ollama
+    environment:
+      MODEL_NAME: "qwen2.5:0.5b-instruct"
+    networks:
+      - internal
+    # ports:
+      # - "11434:11434"
+    volumes:
+      - ../.ollama/models:/root/.ollama/models
+#   deploy:
+#     resources:
+#       reservations:
+#         devices:
+#           - driver: nvidia
+#             count: 1
+#             capabilities: [gpu]
+
+networks:
+  internal:
+    driver: bridge

@@ -1,17 +1,19 @@
+from collections import defaultdict
 import json
 import os
 import threading
 
 from datetime import datetime
 from logging import getLogger, basicConfig
-from typing import Optional
+from time import sleep
+from typing import Optional, Iterator
 
 import uvicorn
 
 from fastapi import FastAPI, staticfiles, Request
 from fastapi.responses import RedirectResponse, StreamingResponse
+from openai import APIConnectionError, NotFoundError
 from pydantic import BaseModel
-from transformers import TextIteratorStreamer
 
 from challenges import agentic_challenge, filtered_response_challenge, indirect_injection_challenge, rag_challenge
 from common import llm, embed
@@ -74,13 +76,13 @@ def mainframe_verify(part: str, message: str) -> str:
 
 @app.get("/brig")
 async def chat(message: str) -> StreamingResponse:
-    streamer: TextIteratorStreamer = agentic_challenge.run(message)
+    streamer: Iterator[str] = agentic_challenge.run(message)
     return StreamingResponse(streamer)
 
 # ====================================== galley ======================================
 # MARK: Part 2 (Galley)
 
-galley_inventory: dict[str, str] = {
+base_galley_inventory: dict[str, str] = {
     "Eggs": "5 cartons",
     "Ration Packs": "122", 
     "Dried Milk": "4 packets",
@@ -88,6 +90,7 @@ galley_inventory: dict[str, str] = {
     "Ketchup": "77 packets",
     "Potatoes": "55",
 }
+galley_inventories_by_ip: dict[str, dict[str, str]] = defaultdict(lambda: base_galley_inventory.copy())
 
 class GalleyCreateFoodRequest(BaseModel):
     food_name: Optional[str]
@@ -95,6 +98,7 @@ class GalleyCreateFoodRequest(BaseModel):
 
 @app.post("/galley/create_new_food")
 async def create_food(request: Request) -> dict[str, str]:
+    request_origin_ip = request.client.host
     body: str = (await request.body()).decode()
     try:
         d = json.loads(body)
@@ -107,28 +111,27 @@ async def create_food(request: Request) -> dict[str, str]:
     food_quantity = d.get("food_quantity")
     if food_quantity is None:
         return {"error": "`food_quantity` was not defined in request!"}
-    galley_inventory[food_name] = food_quantity
+
+    print(request.client)
+    galley_inventories_by_ip[request_origin_ip][food_name] = food_quantity
     return {"response": "Successfully added new food item!"}
 
 
 @app.get("/galley/inventory")
-async def get_inventory() -> StreamingResponse:
-    inventory_string = "\n".join(f"{k}: {v}" for k, v in galley_inventory.items())
+async def get_inventory(request: Request) -> StreamingResponse:
+    request_origin_ip = request.client.host
+    print(request.client)
+    inventory_string = "\n".join(f"{k}: {v}" for k, v in galley_inventories_by_ip[request_origin_ip].items())
+    logger.info("Summarizing inventory for %s: %s.", request_origin_ip, inventory_string.replace("\n", "\\n"))
     response = indirect_injection_challenge.run(f"Summarise the following inventory:\n{inventory_string}")
     return StreamingResponse(response)
 
 @app.post("/galley/inventory/clear")
-def clear_inventory() -> dict[str, str]:
-    global galley_inventory
+def clear_inventory(request: Request) -> dict[str, str]:
+    global base_galley_inventory
+    request_origin_ip = request.client.host
 
-    galley_inventory = {
-        "Eggs": "5 cartons",
-        "Ration Packs": "122", 
-        "Dried Milk": "4 packets",
-        "Dried Ice Cream": "22 packets",
-        "Ketchup": "77 packets",
-        "Potatoes": "55",
-    }
+    galley_inventories_by_ip[request_origin_ip] = base_galley_inventory.copy()
 
     return {"response": "Successfully reset inventory state."}
 
@@ -163,7 +166,18 @@ def main() -> None:
     global app
 
     logger.info("Warming up LLM.")
-    logger.info(llm.respond(prompt="<cold start>", system_prompt="Reply to all messages with 'confirmed' only."))
+    while True:
+        try:
+            response = llm.respond(prompt="<cold start>", system_prompt="Reply to all messages with 'confirmed' only.")
+            break
+        except APIConnectionError:
+            logger.info("Response bounced - sleeping to wait for ollama to start...")
+            sleep(1)
+        except NotFoundError:
+            logger.info("Response bounced - sleeping to wait for ollama to pull model...")
+            sleep(1)
+
+    logger.info("Ready.")
     uvicorn.run(app, host="0.0.0.0", port=8080) #, reload=True, reload_dirs=["challenges", "common", "static"])
 
 

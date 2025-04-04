@@ -1,0 +1,25 @@
+FROM python:3.12.8-slim-bullseye
+
+RUN mkdir /app
+RUN useradd --create-home python
+RUN chown -R python /app
+USER python
+
+RUN mkdir /home/python/.cache
+RUN chown -R python /home/python/.cache
+RUN chmod 777 -R /home/python/.cache
+
+# do the expensive stuff before copying the code so it stays cached
+RUN pip install --no-cache-dir fastapi==0.115.11 nltk==3.9.1 pydantic==2.10.6 pydantic_core==2.27.2 requests==2.32.3 uvicorn==0.34.0 openai
+
+RUN python3 -c 'from nltk import download; download("semcor"); download("punkt"); download("punkt_tab"); download("stopwords");'
+
+COPY ./server.py /app
+COPY ./static /app/static
+COPY ./common /app/common
+COPY ./challenges /app/challenges
+
+EXPOSE 8080
+
+WORKDIR /app
+CMD ["python3" ,"server.py"]
