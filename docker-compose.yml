@@ -6,13 +6,13 @@ services:
     environment:
       LLM_ENDPOINT: "http://ollama:11434/v1"
       MODEL_NAME: "qwen2.5:3b-instruct"
-      PART1_FLAG: "PART1_FLAG"
-      PART2_FLAG: "PART2_FLAG"
-      PART2_CODE: "123456"
-      PART3_FLAG: "PART3_FLAG"
-      PART3_CODE: "123456"
-      PART4_FLAG: "PART4_FLAG"
-      PART4_CODE: "123456"
+      PART1_FLAG: "FLAG{AG3NT1C_LLMS}"
+      PART2_CODE: "740340"
+      PART2_FLAG: "FLAG{1ND1R3CT_PR0MPT_1NJ3CT10N_15_D4NG3R0U5}"
+      PART3_CODE: "112359"
+      PART3_FLAG: "FLAG{3V4DING_P0ST_R3SP0N53_F1LT3RS}"
+      PART4_CODE: "521482"
+      PART4_FLAG: "FLAG{D0NT_G1V3_RAG_3V3RYTH1NG}"
     networks:
       - internal
     ports: 
