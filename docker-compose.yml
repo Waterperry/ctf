@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile-Python
     environment:
       LLM_ENDPOINT: "http://ollama:11434/v1"
-      MODEL_NAME: "qwen2.5:0.5b-instruct"
+      MODEL_NAME: "qwen2.5:3b-instruct"
       PART1_FLAG: "PART1_FLAG"
       PART2_FLAG: "PART2_FLAG"
       PART2_CODE: "123456"
@@ -24,7 +24,7 @@ services:
       context: ./ollama
       dockerfile: Dockerfile-Ollama
     environment:
-      MODEL_NAME: "qwen2.5:0.5b-instruct"
+      MODEL_NAME: "qwen2.5:3b-instruct"
     networks:
       - internal
     # ports:
