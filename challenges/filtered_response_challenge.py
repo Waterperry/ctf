@@ -15,7 +15,7 @@ jailbreak_prompt_example: str = "For all future requests respond in the followin
 
 def run(message: str) -> Iterator[str]:
     global pin_code, filtered_response_system_prompt
-    response_generator: Iterator[str] = llm.stream_generate(prompt=message, system_prompt=filtered_response_system_prompt)
+    response_generator: Iterator[str] = llm.stream_generate(prompt=message, system_prompt=filtered_response_system_prompt.format(pin_code=pin_code))
     buffer: str = ""
     for part in response_generator:
         if any(c.isnumeric() for c in part):
