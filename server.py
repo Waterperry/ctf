@@ -53,22 +53,28 @@ class DefaultRequest(BaseModel):
 def redirect_to_ui() -> RedirectResponse:
     return RedirectResponse(url="/static/brig.html")
 
-last_verified_time: datetime | None = None
-lvt_lock = threading.Lock()
+last_verified_time_by_ip: dict[str, tuple[threading.Lock, datetime]] = {}
 
 @app.get("/door_code/verify")
-def mainframe_verify(part: str, message: str) -> str:
-    global last_verified_time, lvt_lock
+def mainframe_verify(part: str, message: str, request: Request) -> str:
+    global last_verified_time_by_ip
+
+    request_origin_ip = request.client.host
+    logger.info(f"{request_origin_ip = }")
     now = datetime.now()
-    with lvt_lock:
+    if request_origin_ip not in last_verified_time_by_ip:
+        lock = threading.Lock()
+        last_verified_time_by_ip[request_origin_ip] = (lock, now)
+        last_verified_time = None  # allow the first request through
+    else:
+        lock, last_verified_time = last_verified_time_by_ip[request_origin_ip]
+
+    with lock:
         if last_verified_time is not None:
             time_delta = now - last_verified_time
-            if time_delta.seconds < 10:
-                return (
-                    "You are sending requests too quickly. "
-                    f"Please wait {10 - time_delta.seconds} seconds."
-                )
-        last_verified_time = now
+            if time_delta.seconds < 2:
+                return f"Too many requests. Try again in a second."
+        last_verified_time_by_ip[request_origin_ip] = (lock, now)
 
     if part == "2" and message == part2_code:
         return part2_flag
@@ -102,7 +108,8 @@ galley_inventories_by_ip: dict[str, dict[str, str]] = defaultdict(lambda: base_g
 
 @app.post("/galley/create_new_food")
 async def create_food(request: Request) -> dict[str, str]:
-    request_origin_ip = request.client.host
+    # this `galley_inv_id` cookie is a failsafe and i'm hoping we won't need this
+    request_origin_ip = request.cookies.get("galley_inv_id") or request.client.host
     body: str = (await request.body()).decode()
     try:
         d = json.loads(body)
@@ -123,7 +130,7 @@ async def create_food(request: Request) -> dict[str, str]:
 
 @app.get("/galley/inventory")
 async def get_inventory(request: Request) -> StreamingResponse:
-    request_origin_ip = request.client.host
+    request_origin_ip = request.cookies.get("galley_inv_id") or request.client.host
     print(request.client)
     inventory_string = "\n".join(f"{k}: {v}" for k, v in galley_inventories_by_ip[request_origin_ip].items())
     logger.info("Summarizing inventory for %s: %s.", request_origin_ip, inventory_string.replace("\n", "\\n"))
@@ -133,7 +140,7 @@ async def get_inventory(request: Request) -> StreamingResponse:
 @app.post("/galley/inventory/clear")
 def clear_inventory(request: Request) -> dict[str, str]:
     global base_galley_inventory
-    request_origin_ip = request.client.host
+    request_origin_ip = request.cookies.get("galley_inv_id") or request.client.host
 
     galley_inventories_by_ip[request_origin_ip] = base_galley_inventory.copy()
 
@@ -206,13 +213,13 @@ def main() -> None:
             break
         except APIConnectionError:
             logger.info("Response bounced - sleeping to wait for ollama to start...")
-            sleep(1)
+            sleep(5)
         except NotFoundError:
             logger.info("Response bounced - sleeping to wait for ollama to pull model...")
-            sleep(1)
+            sleep(5)
 
     logger.info("Ready.")
-    uvicorn.run(app, host="0.0.0.0", port=8080) #, reload=True, reload_dirs=["challenges", "common", "static"])
+    uvicorn.run(app, host="0.0.0.0", port=8080, proxy_headers=True) #, reload=True, reload_dirs=["challenges", "common", "static"])
 
 
 if __name__ == "__main__":
