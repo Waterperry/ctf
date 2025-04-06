@@ -175,28 +175,28 @@ async def archive_master_reset_panel(message: str) -> StreamingResponse:
     return StreamingResponse(rag_challenge.run(message))
 
 
-@app.post("/aurora_master_reset_panel")
-async def aurora_master_reset_panel(request: Request) -> str:
-    body = await request.body()
-
-    try:
-        arr: list[np.ndarray] = pickle.loads(body)
-    except:
-        return "Error: unable to unpickle supplied weights! Expected an array of NumPy ndarrays."
-    
-    try:
-        backup = [a.copy() for a in arr]
-    except AttributeError as e:
-        return "Error: " + str(e)
-
-    # do a test pass through the model
-    try:
-        input = np.array([5, 13, 160])
-        for layer in arr:
-            input = input @ layer
-    except:
-        return f"Failed to do a forward pass through the model with {input = }, {arr = }"
-    return "Aurora reset successfully!"
+# @app.post("/aurora_master_reset_panel")
+# async def aurora_master_reset_panel(request: Request) -> str:
+#     body = await request.body()
+# 
+#     try:
+#         arr: list[np.ndarray] = pickle.loads(body)
+#     except:
+#         return "Error: unable to unpickle supplied weights! Expected an array of NumPy ndarrays."
+#     
+#     try:
+#         backup = [a.copy() for a in arr]
+#     except AttributeError as e:
+#         return "Error: " + str(e)
+# 
+#     # do a test pass through the model
+#     try:
+#         input = np.array([5, 13, 160])
+#         for layer in arr:
+#             input = input @ layer
+#     except:
+#         return f"Failed to do a forward pass through the model with {input = }, {arr = }"
+#     return "Aurora reset successfully!"
 
 # recompile path regexes to make them case insensitive (just in case)
 for route in app.router.routes:
