@@ -1,16 +1,17 @@
-from collections import defaultdict
 import json
-import numpy as np
 import os
 import pickle
 import re
 import threading
 
+
+from collections import defaultdict
 from datetime import datetime
 from logging import getLogger, basicConfig
 from time import sleep
 from typing import Optional, Iterator
 
+import numpy as np
 import uvicorn
 
 from fastapi import FastAPI, staticfiles, Request

@@ -15,13 +15,9 @@ def run(message: str) -> Iterator[str]:
     global agentic_system_prompt
     buffer: str = ""
     iterator = llm.stream_generate(prompt=message, system_prompt=agentic_system_prompt)
-    while True:
-        try:
-            next_part = next(iterator)
-        except StopIteration:
-            break
+    for next_part in iterator:
         buffer += next_part
         yield next_part
-    
+
     if "COMMAND: OPEN DOOR 1" in buffer:
         yield f"\nCongratulations, you have escaped the brig! Here is your flag: {flag}\n"

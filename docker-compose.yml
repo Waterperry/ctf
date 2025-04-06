@@ -17,8 +17,8 @@ services:
       - internal
     ports: 
       - "8080:8080"
-    volumes:
-      - ../.cache:/home/python/.cache
+#   volumes:
+#     - ../.cache:/home/python/.cache
   ollama:
     build: 
       context: ./ollama
@@ -31,13 +31,13 @@ services:
       # - "11434:11434"
     volumes:
       - ../.ollama/models:/root/.ollama/models
-#   deploy:
-#     resources:
-#       reservations:
-#         devices:
-#           - driver: nvidia
-#             count: 1
-#             capabilities: [gpu]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
 
 networks:
   internal:
