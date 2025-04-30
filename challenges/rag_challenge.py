@@ -11,8 +11,19 @@ from common.embed import keyword_similarity
 
 logger = getLogger(__name__)
 
-def run(message: str) -> str | Iterator[str]:
+prompt: str = """
+====== RETRIEVED =====
+
+{pretext}
+
+==== CREW REQUEST ====
+
+{request}
+"""
+
+def run(message: str) -> Iterator[str]:
     logger.info("Doing embedding.")
-    pretext: str = "\n\n".join(keyword_similarity(message)) + "\n\n"
+    pretext: str = "\n".join(keyword_similarity(message))
     logger.info("Got pretext ```%s``` using embedding.", pretext.replace("\n", "\\n"))
-    return llm.stream_generate(prompt=(pretext+message), system_prompt=archive_system_prompt)
+    query = prompt.format(pretext=pretext, request=message)
+    return llm.stream_generate(prompt=query, system_prompt=archive_system_prompt)
